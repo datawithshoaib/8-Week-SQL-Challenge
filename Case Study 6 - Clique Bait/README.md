@@ -1,44 +1,31 @@
-# CliqueBait Case Study using MySQL
+# Clique Bait Case Study
 
-ERD (dbdiagram queries):
+![Case Study 6](../IMG/case_study6.png)
 
-TABLE clique_bait.event_identifier {
-  "event_type" INTEGER
-  "event_name" VARCHAR(13)
-}
+## Business Task
+Clique Bait is not like your regular online seafood store - the founder and CEO Danny, was also a part of a digital data analytics team and wanted to expand his knowledge into the seafood industry!
 
-TABLE clique_bait.campaign_identifier {
-  "campaign_id" INTEGER
-  "products" VARCHAR(3)
-  "campaign_name" VARCHAR(33)
-  "start_date" TIMESTAMP
-  "end_date" TIMESTAMP
-}
+In this case study - you are required to support Danny’s vision and analyse his dataset and come up with creative solutions to calculate funnel fallout rates for the Clique Bait online store.
 
-TABLE clique_bait.page_hierarchy {
-  "page_id" INTEGER
-  "page_name" VARCHAR(14)
-  "product_category" VARCHAR(9)
-  "product_id" INTEGER
-}
+---
 
-TABLE clique_bait.users {
-  "user_id" INTEGER
-  "cookie_id" VARCHAR(6)
-  "start_date" TIMESTAMP
-}
+## Entity Relationship Diagram
+![EDR 6](../IMG/erd6.png)
 
-TABLE clique_bait.events {
-  "visit_id" VARCHAR(6)
-  "cookie_id" VARCHAR(6)
-  "page_id" INTEGER
-  "event_type" integer
-  "sequence_number" integer
-  "event_time" TIMESTAMP
-}
+---
 
-Ref: "clique_bait"."users"."cookie_id" < "clique_bait"."events"."cookie_id"
+## 1. Digital Analysis
 
-Ref: "clique_bait"."event_identifier"."event_type" < "clique_bait"."events"."event_type"
+View my solution here
 
-Ref: "clique_bait"."page_hierarchy"."page_id" < "clique_bait"."events"."page_id"
+Using the available datasets - answer the following questions using a single query for each one:
+
+How many users are there?
+How many cookies does each user have on average?
+What is the unique number of visits by all users per month?
+What is the number of events for each event type?
+What is the percentage of visits which have a purchase event?
+What is the percentage of visits which view the checkout page but do not have a purchase event?
+What are the top 3 pages by number of views?
+What is the number of views and cart adds for each product category?
+What are the top 3 products by purchases?
