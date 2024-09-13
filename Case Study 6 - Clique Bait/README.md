@@ -1,6 +1,8 @@
 # Clique Bait Case Study
 
-<img src="../IMG/case_study6.png" alt="Case Study 6" width="300"/>
+<center>
+    <img src="../IMG/case_study6.png" alt="Case Study 6" width="400"/>
+</center>
 
 ## Objective
 Clique Bait is not like your regular online seafood store - the founder and CEO Danny, was also a part of a digital data analytics team and wanted to expand his knowledge into the seafood industry!
