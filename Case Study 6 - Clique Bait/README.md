@@ -1,8 +1,8 @@
 # Clique Bait Case Study
 
-![Case Study 6](../IMG/case_study6.png)
+![Case Study 6](../IMG/case_study6.png){width = 300}
 
-## Business Task
+## Objective
 Clique Bait is not like your regular online seafood store - the founder and CEO Danny, was also a part of a digital data analytics team and wanted to expand his knowledge into the seafood industry!
 
 In this case study - you are required to support Danny’s vision and analyse his dataset and come up with creative solutions to calculate funnel fallout rates for the Clique Bait online store.
@@ -53,7 +53,7 @@ Use your 2 new output tables - answer the following questions:
 - What is the average conversion rate from view to cart add?
 - What is the average conversion rate from cart add to purchase?
 
--- 
+---
 
 ## 3. Campaigns Analysis
 
