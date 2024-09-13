@@ -1,6 +1,6 @@
 # Clique Bait Case Study
 
-<div style="text-align: center;">
+<div style="display: flex; justify-content: center;">
     <img src="../IMG/case_study6.png" alt="Case Study 6" width="400"/>
 </div>
 
