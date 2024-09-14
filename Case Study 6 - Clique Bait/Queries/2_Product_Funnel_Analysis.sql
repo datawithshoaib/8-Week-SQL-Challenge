@@ -1,6 +1,6 @@
 -- Using a single SQL query
 
-CREATE TABLE product_summary AS
+CREATE TEMPORARY TABLE product_summary AS
 -- How many times was each product viewed?
 WITH product_views AS (
 SELECT p.product_id, p.page_name, COUNT(*) AS page_views

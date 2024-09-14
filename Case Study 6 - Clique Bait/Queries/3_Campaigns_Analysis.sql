@@ -19,6 +19,11 @@ JOIN page_hierarchy ph ON e.page_id = ph.page_id
 LEFT JOIN campaign_identifier c ON e.event_time BETWEEN c.start_date AND c.end_date
 GROUP BY u.user_id, e.visit_id, c.campaign_name;
 
+SELECT COUNT(*) FROM campaign_summary;
+
+select * from campaign_summary
+LIMIT 5;
+
 -- Calculate no. of users who received impressions during campaign period
 SELECT COUNT(DISTINCT user_id) AS received_impressions
 FROM campaign_summary

@@ -68,9 +68,10 @@ SELECT
     SUM(CASE WHEN ei.event_name = 'Add to Cart' THEN 1 ELSE 0 END) AS cart_adds
 FROM events e
 JOIN event_identifier ei ON e.event_type = ei.event_type
-JOIN page_hierarchy p ON p.page_id = p.page_id
+JOIN page_hierarchy p ON e.page_id = p.page_id
 WHERE p.product_category IS NOT NULL
-GROUP BY p.product_category;
+GROUP BY p.product_category
+ORDER BY page_views DESC;
 
 -- What are the top 3 products by purchases?
 SELECT p.product_id, 
