@@ -29,7 +29,7 @@ SELECT
     SUM(CASE WHEN ei.event_name = 'Ad Impression' THEN 1 ELSE 0 END) AS impression,
     SUM(CASE WHEN ei.event_name = 'Ad Click' THEN 1 ELSE 0 END) AS click,
     GROUP_CONCAT(CASE WHEN ei.event_name = 'Add to Cart' THEN ph.page_name END 
-				 ORDER BY e.sequence_number SEPARATOR ', ') AS cart_products
+        ORDER BY e.sequence_number SEPARATOR ', ') AS cart_products
 FROM events e
 JOIN users u ON e.cookie_id = u.cookie_id
 JOIN event_identifier ei ON e.event_type = ei.event_type
