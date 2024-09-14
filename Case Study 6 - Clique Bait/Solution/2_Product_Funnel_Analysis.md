@@ -33,7 +33,7 @@ GROUP BY p.page_name
 -- How many times was each product added to a cart but not purchased (abandoned)?
 added_cart_not_purchased AS (
 SELECT p.page_name, 
-	   COUNT(*) AS added_cart_no_purchase_count
+	COUNT(*) AS added_cart_no_purchase_count
 FROM events e
 JOIN page_hierarchy p ON e.page_id = p.page_id
 WHERE e.event_type = 2 AND e.visit_id NOT IN (

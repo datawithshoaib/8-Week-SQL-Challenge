@@ -28,9 +28,9 @@ SELECT p.page_name,
 FROM events e
 JOIN page_hierarchy p ON e.page_id = p.page_id
 WHERE e.event_type = 2 AND e.visit_id NOT IN (
-										SELECT e.visit_id 
-										FROM events e
-										WHERE e.event_type = 3)
+	SELECT e.visit_id 
+	FROM events e
+	WHERE e.event_type = 3)
 GROUP BY p.page_name
 ),
 
@@ -41,17 +41,18 @@ FROM events e
 JOIN page_hierarchy p ON e.page_id = p.page_id
 JOIN event_identifier ei ON e.event_type = ei.event_type
 WHERE ei.event_name = 'Add to Cart'
-AND e.visit_id IN ( SELECT e.visit_id 
-					FROM events e
-                    JOIN event_identifier ei ON e.event_type = ei.event_type
- 					WHERE ei.event_name = 'Purchase' )
+AND e.visit_id IN ( 
+	SELECT e.visit_id 
+	FROM events e
+	JOIN event_identifier ei ON e.event_type = ei.event_type
+	WHERE ei.event_name = 'Purchase')
 GROUP BY p.page_name
 )
 
 SELECT pv.*,
-	   ca.add_cart_count,
-       anp.added_cart_no_purchase_count,
-       p.purchase_count
+   ca.add_cart_count,
+   anp.added_cart_no_purchase_count,
+   p.purchase_count
 FROM product_views pv
 JOIN cart_adds ca ON pv.page_name = ca.page_name
 JOIN added_cart_not_purchased anp ON pv.page_name = anp.page_name
@@ -88,9 +89,9 @@ SELECT p.product_category,
 FROM events e
 JOIN page_hierarchy p ON e.page_id = p.page_id
 WHERE e.event_type = 2 AND e.visit_id NOT IN (
-										SELECT e.visit_id 
-										FROM events e
-										WHERE e.event_type = 3)
+	SELECT e.visit_id 
+	FROM events e
+	WHERE e.event_type = 3)
 GROUP BY p.product_category
 ),
 
@@ -101,10 +102,11 @@ FROM events e
 JOIN page_hierarchy p ON e.page_id = p.page_id
 JOIN event_identifier ei ON e.event_type = ei.event_type
 WHERE ei.event_name = 'Add to Cart'
-AND e.visit_id IN ( SELECT e.visit_id 
-					FROM events e
-                    JOIN event_identifier ei ON e.event_type = ei.event_type
- 					WHERE ei.event_name = 'Purchase' )
+AND e.visit_id IN ( 
+	SELECT e.visit_id 
+	FROM events e
+	JOIN event_identifier ei ON e.event_type = ei.event_type
+	WHERE ei.event_name = 'Purchase')
 GROUP BY p.product_category
 ),
 
