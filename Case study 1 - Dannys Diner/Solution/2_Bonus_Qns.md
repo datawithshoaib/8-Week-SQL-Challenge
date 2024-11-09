@@ -1,3 +1,5 @@
+## Bonus Questions
+
 ### Join All The Things
 
 ```sql
