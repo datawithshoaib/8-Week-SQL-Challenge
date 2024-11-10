@@ -5,7 +5,7 @@
 ```sql
 SELECT
 	s.customer_id,
-	SUM(m.price)
+	SUM(m.price) AS total_amount
 FROM
 	sales s
 	LEFT JOIN menu m ON s.product_id = m.product_id
@@ -15,23 +15,11 @@ ORDER BY
 	s.customer_id;
 ```
 
-| customer_id | order_date | product_id |
-|-------------|------------|------------|
-| A           | 2021-01-01 | 1          |
-| A           | 2021-01-01 | 2          |
-| A           | 2021-01-07 | 2          |
-| A           | 2021-01-10 | 3          |
-| A           | 2021-01-11 | 3          |
-| A           | 2021-01-11 | 3          |
-| B           | 2021-01-01 | 2          |
-| B           | 2021-01-02 | 2          |
-| B           | 2021-01-04 | 1          |
-| B           | 2021-01-11 | 1          |
-| B           | 2021-01-16 | 3          |
-| B           | 2021-02-01 | 3          |
-| C           | 2021-01-01 | 3          |
-| C           | 2021-01-01 | 3          |
-| C           | 2021-01-07 | 3          |
+| customer_id | total_amount |
+|-------------|--------------|
+| A           | 76           |
+| B           | 74           |
+| C           | 36           |
 
 ---
 
@@ -62,28 +50,33 @@ ORDER BY
 ```sql
 SELECT
 	customer_id,
+	order_date,
 	product_name
 FROM (
 	SELECT
 		s.customer_id,
 		s.order_date,
-		s.product_id,
 		m.product_name,
-		ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
+		DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
 	FROM
 		sales s
 		LEFT JOIN menu m ON s.product_id = m.product_id
 ) AS ranked_sales
 WHERE rn = 1
+GROUP BY
+	customer_id,
+	order_date,
+	product_name
 ORDER BY
 	customer_id;
 ```
 
-| customer_id | product_name |
-|-------------|--------------|
-| A           | curry        |
-| B           | curry        |
-| C           | ramen        |
+| customer_id | order_date  | product_name |
+|-------------|-------------|--------------|
+| A           | 2021-01-01  | curry        |
+| A           | 2021-01-01  | sushi        |
+| B           | 2021-01-01  | curry        |
+| C           | 2021-01-01  | ramen        |
 
 ---
 
@@ -126,24 +119,28 @@ WITH item_cnts AS (
 
 SELECT
 	customer_id,
-	product_name
+	product_name,
+	cnt
 FROM (
 	SELECT
 		*,
-		ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY cnt DESC) AS rn
+		DENSE_RANK() OVER(PARTITION BY customer_id ORDER BY cnt DESC) AS rn
 	FROM
 		item_cnts
 ) AS ranked_pdts
 WHERE rn = 1
 ORDER BY
-	customer_id;
+	customer_id,
+	product_name;
 ```
 
-| customer_id | product_name |
-|-------------|--------------|
-| A           | ramen        |
-| B           | curry        |
-| C           | ramen        |
+| customer_id | product_name | cnt |
+|-------------|--------------|-----|
+| A           | ramen        | 3   |
+| B           | curry        | 2   |
+| B           | ramen        | 2   |
+| B           | sushi        | 2   |
+| C           | ramen        | 3   |
 
 ---
 
@@ -154,7 +151,9 @@ WITH ranked_items AS (
 	SELECT 
 		s.customer_id,
 		me.product_name,
-		ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
+		s.order_date,
+		m.join_date,
+		DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
 	FROM 
 		sales s
 		LEFT JOIN members m ON s.customer_id = m.customer_id
@@ -164,17 +163,19 @@ WITH ranked_items AS (
 )
 SELECT 
 	customer_id,
-	product_name
+	product_name,
+	order_date,
+	join_date
 FROM
 	ranked_items
 WHERE
 	rn = 1;
 ```
 
-| customer_id | product_name |
-|-------------|--------------|
-| A           | curry        |
-| B           | sushi        |
+| customer_id | product_name | order_date  | join_date  |
+|-------------|--------------|-------------|------------|
+| A           | curry        | 2021-01-07  | 2021-01-07 |
+| B           | sushi        | 2021-01-11  | 2021-01-09 |
 
 ---
 
@@ -185,7 +186,9 @@ WITH ranked_items AS (
 	SELECT
 		s.customer_id,
 		me.product_name,
-		ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.order_date DESC) AS rn
+		s.order_date,
+		m.join_date,
+		DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY s.order_date DESC) AS rn
 	FROM 
 		sales s
 		LEFT JOIN members m ON s.customer_id = m.customer_id
@@ -195,17 +198,20 @@ WITH ranked_items AS (
 )
 SELECT 
 	customer_id,
-	product_name
+	product_name,
+	order_date,
+	join_date
 FROM
 	ranked_items
 WHERE
 	rn = 1;
 ```
 
-| customer_id | product_name |
-|-------------|--------------|
-| A           | sushi        |
-| B           | sushi        |
+| customer_id | product_name | order_date  | join_date  |
+|-------------|--------------|-------------|------------|
+| A           | sushi        | 2021-01-01  | 2021-01-07 |
+| A           | curry        | 2021-01-01  | 2021-01-07 |
+| B           | sushi        | 2021-01-04  | 2021-01-09 |
 
 ---
 

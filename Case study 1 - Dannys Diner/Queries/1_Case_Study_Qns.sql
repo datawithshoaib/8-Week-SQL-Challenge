@@ -21,7 +21,7 @@ FROM
 -- 1. What is the total amount each customer spent at the restaurant?
 SELECT
 	s.customer_id,
-	SUM(m.price)
+	SUM(m.price) AS total_amount
 FROM
 	sales s
 	LEFT JOIN menu m ON s.product_id = m.product_id
@@ -44,19 +44,23 @@ ORDER BY
 -- 3. What was the first item from the menu purchased by each customer?
 SELECT
 	customer_id,
+	order_date,
 	product_name
 FROM (
 	SELECT
 		s.customer_id,
 		s.order_date,
-		s.product_id,
 		m.product_name,
-		ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
+		DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
 	FROM
 		sales s
 		LEFT JOIN menu m ON s.product_id = m.product_id
 ) AS ranked_sales
 WHERE rn = 1
+GROUP BY
+	customer_id,
+	order_date,
+	product_name
 ORDER BY
 	customer_id;
 
@@ -89,24 +93,28 @@ WITH item_cnts AS (
 
 SELECT
 	customer_id,
-	product_name
+	product_name,
+	cnt
 FROM (
 	SELECT
 		*,
-		ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY cnt DESC) AS rn
+		DENSE_RANK() OVER(PARTITION BY customer_id ORDER BY cnt DESC) AS rn
 	FROM
 		item_cnts
 ) AS ranked_pdts
 WHERE rn = 1
 ORDER BY
-	customer_id;
+	customer_id,
+	product_name;
 
 -- 6. Which item was purchased first by the customer after they became a member?
 WITH ranked_items AS (
 	SELECT 
 		s.customer_id,
 		me.product_name,
-		ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
+		s.order_date,
+		m.join_date,
+		DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS rn
 	FROM 
 		sales s
 		LEFT JOIN members m ON s.customer_id = m.customer_id
@@ -116,7 +124,9 @@ WITH ranked_items AS (
 )
 SELECT 
 	customer_id,
-	product_name
+	product_name,
+	order_date,
+	join_date
 FROM
 	ranked_items
 WHERE
@@ -127,7 +137,9 @@ WITH ranked_items AS (
 	SELECT
 		s.customer_id,
 		me.product_name,
-		ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.order_date DESC) AS rn
+		s.order_date,
+		m.join_date,
+		DENSE_RANK() OVER(PARTITION BY s.customer_id ORDER BY s.order_date DESC) AS rn
 	FROM 
 		sales s
 		LEFT JOIN members m ON s.customer_id = m.customer_id
@@ -137,7 +149,9 @@ WITH ranked_items AS (
 )
 SELECT 
 	customer_id,
-	product_name
+	product_name,
+	order_date,
+	join_date
 FROM
 	ranked_items
 WHERE
